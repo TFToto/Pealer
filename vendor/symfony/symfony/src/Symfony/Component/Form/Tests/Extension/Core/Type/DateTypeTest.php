@@ -33,6 +33,16 @@ class DateTypeTest extends TestCase
     }
 
     /**
+     * @group legacy
+     */
+    public function testLegacyName()
+    {
+        $form = $this->factory->create('date');
+
+        $this->assertSame('date', $form->getConfig()->getType()->getName());
+    }
+
+    /**
      * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
      */
     public function testInvalidWidgetOption()
@@ -70,7 +80,7 @@ class DateTypeTest extends TestCase
     public function testSubmitFromSingleTextDateTime()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -91,7 +101,7 @@ class DateTypeTest extends TestCase
     public function testSubmitFromSingleTextString()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -112,7 +122,7 @@ class DateTypeTest extends TestCase
     public function testSubmitFromSingleTextTimestamp()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -135,7 +145,7 @@ class DateTypeTest extends TestCase
     public function testSubmitFromSingleTextRaw()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -399,7 +409,7 @@ class DateTypeTest extends TestCase
     public function testSetDataWithNegativeTimezoneOffsetStringInput()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -421,7 +431,7 @@ class DateTypeTest extends TestCase
     public function testSetDataWithNegativeTimezoneOffsetDateTimeInput()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -495,7 +505,7 @@ class DateTypeTest extends TestCase
     public function testMonthsOptionLongFormat()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -515,7 +525,7 @@ class DateTypeTest extends TestCase
     public function testMonthsOptionLongFormatWithDifferentTimezone()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -621,7 +631,7 @@ class DateTypeTest extends TestCase
     public function testPassDatePatternToView()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -634,7 +644,7 @@ class DateTypeTest extends TestCase
     public function testPassDatePatternToViewDifferentFormat()
     {
         // we test against "de_AT", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_AT');
 
@@ -682,7 +692,7 @@ class DateTypeTest extends TestCase
     public function testDatePatternFormatWithQuotedStrings()
     {
         // we test against "es_ES", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('es_ES');
 
@@ -757,6 +767,24 @@ class DateTypeTest extends TestCase
         $this->assertSame('Empty', $view['year']->vars['placeholder']);
         $this->assertSame('Empty', $view['month']->vars['placeholder']);
         $this->assertSame('Empty', $view['day']->vars['placeholder']);
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testPassEmptyValueBC()
+    {
+        $form = $this->factory->create('Symfony\Component\Form\Extension\Core\Type\DateType', null, array(
+            'empty_value' => 'Empty',
+        ));
+
+        $view = $form->createView();
+        $this->assertSame('Empty', $view['year']->vars['placeholder']);
+        $this->assertSame('Empty', $view['month']->vars['placeholder']);
+        $this->assertSame('Empty', $view['day']->vars['placeholder']);
+        $this->assertSame('Empty', $view['year']->vars['empty_value']);
+        $this->assertSame('Empty', $view['month']->vars['empty_value']);
+        $this->assertSame('Empty', $view['day']->vars['empty_value']);
     }
 
     public function testPassPlaceholderAsArray()

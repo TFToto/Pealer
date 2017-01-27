@@ -9,26 +9,26 @@ addons:
     apt_packages:
         - parallel
         - language-pack-fr-base
-        - ldap-utils
-        - slapd
 
 env:
     global:
-        - MIN_PHP=5.5.9
+        - MIN_PHP=5.3.9
         - SYMFONY_PROCESS_PHP_TEST_BINARY=~/.phpenv/versions/5.6/bin/php
 
 matrix:
     include:
         # Use the newer stack for HHVM as HHVM does not support Precise anymore since a long time and so Precise has an outdated version
-        - php: hhvm-3.12
+        - php: hhvm-stable
           sudo: required
           dist: trusty
           group: edge
+        - php: 5.3
+        - php: 5.4
         - php: 5.5
         - php: 5.6
         - php: 7.0
           env: deps=high
-        - php: 7.0
+        - php: 7.1
           env: deps=low
     fast_finish: true
 
@@ -37,35 +37,29 @@ cache:
         - .phpunit
         - php-$MIN_PHP
 
-services:
-    - mongodb
-    - redis-server
+services: mongodb
 
 before_install:
     - stty cols 120
-    - mkdir /tmp/slapd
-    - slapd -f src/Symfony/Component/Ldap/Tests/Fixtures/conf/slapd.conf -h ldap://localhost:3389 &
     - PHP=$TRAVIS_PHP_VERSION
     # Matrix lines for intermediate PHP versions are skipped for pull requests
     - if [[ ! $deps && ! $PHP = ${MIN_PHP%.*} && ! $PHP = hhvm* && $TRAVIS_PULL_REQUEST != false ]]; then deps=skip; skip=1; fi
     # A sigchild-enabled-PHP is used to test the Process component on the lowest PHP matrix line
     - if [[ ! $deps && $PHP = ${MIN_PHP%.*} && ! -d php-$MIN_PHP/sapi ]]; then wget http://museum.php.net/php5/php-$MIN_PHP.tar.bz2 -O - | tar -xj; (cd php-$MIN_PHP; ./configure --enable-sigchild --enable-pcntl; make -j2); fi
     - if [[ ! $PHP = hhvm* ]]; then INI_FILE=~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini; else INI_FILE=/etc/hhvm/php.ini; fi
+    - if [[ ! $skip ]]; then echo date.timezone = Europe/Paris >> $INI_FILE; fi
     - if [[ ! $skip ]]; then echo memory_limit = -1 >> $INI_FILE; fi
     - if [[ ! $skip ]]; then echo session.gc_probability = 0 >> $INI_FILE; fi
     - if [[ ! $skip && $PHP = 5.* ]]; then echo extension = mongo.so >> $INI_FILE; fi
     - if [[ ! $skip && $PHP = 5.* ]]; then echo extension = memcache.so >> $INI_FILE; fi
     - if [[ ! $skip && $PHP = 5.* ]]; then (echo yes | pecl install -f apcu-4.0.11 && echo apc.enable_cli = 1 >> $INI_FILE); fi
-    - if [[ ! $skip && $PHP = 7.0 ]]; then (echo yes | pecl install -f apcu-5.1.5 && echo apc.enable_cli = 1 >> $INI_FILE); fi
+    - if [[ ! $skip && $PHP = 7.* ]]; then (echo yes | pecl install -f apcu-5.1.6 && echo apc.enable_cli = 1 >> $INI_FILE); fi
     - if [[ ! $deps && $PHP = 5.* ]]; then (cd src/Symfony/Component/Debug/Resources/ext && phpize && ./configure && make && echo extension = $(pwd)/modules/symfony_debug.so >> $INI_FILE); fi
     - if [[ ! $skip && $PHP = 5.* ]]; then pecl install -f memcached-2.1.0; fi
     - if [[ ! $skip && ! $PHP = hhvm* ]]; then echo extension = ldap.so >> $INI_FILE; fi
-    - if [[ ! $skip && ! $PHP = hhvm* ]]; then echo extension = redis.so >> $INI_FILE; fi;
     - if [[ ! $skip && ! $PHP = hhvm* ]]; then phpenv config-rm xdebug.ini || echo "xdebug not available"; fi
     - if [[ ! $skip ]]; then [ -d ~/.composer ] || mkdir ~/.composer; cp .composer/* ~/.composer/; fi
     - if [[ ! $skip ]]; then export PHPUNIT=$(readlink -f ./phpunit); fi
-    - if [[ ! $skip ]]; then ldapadd -h localhost:3389 -D cn=admin,dc=symfony,dc=com -w symfony -f src/Symfony/Component/Ldap/Tests/Fixtures/data/base.ldif; fi
-    - if [[ ! $skip ]]; then ldapadd -h localhost:3389 -D cn=admin,dc=symfony,dc=com -w symfony -f src/Symfony/Component/Ldap/Tests/Fixtures/data/fixtures.ldif; fi
 
 install:
     - if [[ ! $skip && $deps ]]; then cp composer.json composer.json.orig; fi
@@ -95,5 +89,3 @@ script:
     - if [[ ! $deps && $PHP = ${MIN_PHP%.*} ]]; then echo -e "1\\n0" | xargs -I{} sh -c 'echo "\\nPHP --enable-sigchild enhanced={}" && ENHANCE_SIGCHLD={} php-$MIN_PHP/sapi/cli/php .phpunit/phpunit-4.8/phpunit --colors=always src/Symfony/Component/Process/'; fi
     - if [[ $deps = high ]]; then echo "$COMPONENTS" | parallel --gnu -j10% 'cd {}; composer update --no-progress --ansi; $PHPUNIT --exclude-group tty,benchmark,intl-data'$LEGACY; fi
     - if [[ $deps = low ]]; then echo "$COMPONENTS" | parallel --gnu -j10% 'cd {}; composer update --no-progress --ansi --prefer-lowest --prefer-stable; $PHPUNIT --exclude-group tty,benchmark,intl-data'; fi
-    # Test the PhpUnit bridge using the original phpunit script
-    - if [[ $deps = low ]]; then (cd src/Symfony/Bridge/PhpUnit && phpenv global 5.3 && php --version && composer update && phpunit); fi

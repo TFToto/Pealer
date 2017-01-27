@@ -2,8 +2,10 @@ imports:
     - { resource: config.yml }
 
 #framework:
-#    cache:
-#        system: cache.adapter.apcu
+#    validation:
+#        cache: validator.mapping.cache.doctrine.apc
+#    serializer:
+#        cache: serializer.mapping.cache.apc
 
 #doctrine:
 #    orm:

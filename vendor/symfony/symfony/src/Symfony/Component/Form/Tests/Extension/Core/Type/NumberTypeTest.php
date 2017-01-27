@@ -21,9 +21,19 @@ class NumberTypeTest extends TestCase
         parent::setUp();
 
         // we test against "de_DE", so we need the full implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         \Locale::setDefault('de_DE');
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testLegacyName()
+    {
+        $form = $this->factory->create('number');
+
+        $this->assertSame('number', $form->getConfig()->getType()->getName());
     }
 
     public function testDefaultFormatting()

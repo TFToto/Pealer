@@ -1,0 +1,4 @@
+services:
+#    playjoom_update.example:
+#        class: Playjoom\UpdateBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

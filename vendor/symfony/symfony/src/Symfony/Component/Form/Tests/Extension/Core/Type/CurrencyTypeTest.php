@@ -19,9 +19,19 @@ class CurrencyTypeTest extends TestCase
 {
     protected function setUp()
     {
-        IntlTestHelper::requireIntl($this);
+        IntlTestHelper::requireIntl($this, false);
 
         parent::setUp();
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testLegacyName()
+    {
+        $form = $this->factory->create('currency');
+
+        $this->assertSame('currency', $form->getConfig()->getType()->getName());
     }
 
     public function testCurrenciesAreSelectable()

@@ -133,6 +133,7 @@ button {
     outline: none;
     border: 0;
     padding: 0;
+    cursor: pointer;
 }
 .btn-link:hover {
     text-decoration: underline;
@@ -242,10 +243,6 @@ table tbody ul {
     padding: 3px 7px;
     white-space: nowrap;
 }
-.label.same-width {
-    min-width: 70px;
-    text-align: center;
-}
 .label.status-success { background: {{ colors.success|raw }}; color: #FFF; }
 .label.status-warning { background: {{ colors.warning|raw }}; color: #FFF; }
 .label.status-error   { background: {{ colors.error|raw }}; color: #FFF; }
@@ -253,12 +250,12 @@ table tbody ul {
 {# Metrics
    ------------------------------------------------------------------------- #}
 .metrics {
-    margin: 1em 0;
+    margin: 1em 0 0;
     overflow: auto;
 }
 .metrics .metric {
     float: left;
-    margin-right: 1em;
+    margin: 0 1em 1em 0;
 }
 
 .metric {
@@ -311,6 +308,12 @@ table tbody ul {
     margin: 0;
     padding-left: 4px;
     vertical-align: middle;
+}
+
+.metric-divider {
+    float: left;
+    margin: 0 1em;
+    min-height: 1px; {# required to apply 'margin' to an empty 'div' #}
 }
 
 {# Cards
@@ -505,11 +508,11 @@ tr.status-warning td {
 #summary .status-error   { background: {{ colors.error|raw }};   }
 
 #summary .status-success h2,
-#summary .status-success a,
+#summary .status-success h2 a,
 #summary .status-warning h2,
-#summary .status-warning a,
+#summary .status-warning h2 a,
 #summary .status-error h2,
-#summary .status-error a {
+#summary .status-error h2 a {
     color: #FFF;
 }
 
@@ -530,10 +533,6 @@ tr.status-warning td {
 }
 #summary dl.metadata dd {
     margin: 0 1.5em 0 0;
-}
-
-#summary dl.metadata .label {
-    background: rgba(255, 255, 255, 0.2);
 }
 
 {# Sidebar
@@ -845,15 +844,6 @@ table.logs .metadata {
 }
 table.logs .metadata strong {
     color: #222;
-}
-table.logs .metadata .context {
-    background: #F5F5F5;
-    color: #222;
-}
-table.logs .metadata .context pre {
-    margin: 5px 0;
-    padding: 5px 10px;
-    white-space: pre-wrap;
 }
 
 table.logs .sf-call-stack {

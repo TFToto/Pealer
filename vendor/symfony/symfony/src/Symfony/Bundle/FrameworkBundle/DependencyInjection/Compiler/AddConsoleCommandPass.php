@@ -24,10 +24,13 @@ class AddConsoleCommandPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $commandServices = $container->findTaggedServiceIds('console.command');
-        $serviceIds = array();
 
         foreach ($commandServices as $id => $tags) {
             $definition = $container->getDefinition($id);
+
+            if (!$definition->isPublic()) {
+                throw new \InvalidArgumentException(sprintf('The service "%s" tagged "console.command" must be public.', $id));
+            }
 
             if ($definition->isAbstract()) {
                 throw new \InvalidArgumentException(sprintf('The service "%s" tagged "console.command" must not be abstract.', $id));
@@ -41,10 +44,9 @@ class AddConsoleCommandPass implements CompilerPassInterface
 
                 throw new \InvalidArgumentException(sprintf('The service "%s" tagged "console.command" must be a subclass of "Symfony\\Component\\Console\\Command\\Command".', $id));
             }
-            $container->setAlias($serviceId = 'console.command.'.strtolower(str_replace('\\', '_', $class)), $id);
-            $serviceIds[] = $definition->isPublic() ? $id : $serviceId;
+            $container->setAlias('console.command.'.strtolower(str_replace('\\', '_', $class)), $id);
         }
 
-        $container->setParameter('console.command.ids', $serviceIds);
+        $container->setParameter('console.command.ids', array_keys($commandServices));
     }
 }

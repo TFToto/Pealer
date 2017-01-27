@@ -19,9 +19,19 @@ class LocaleTypeTest extends TestCase
 {
     protected function setUp()
     {
-        IntlTestHelper::requireIntl($this);
+        IntlTestHelper::requireIntl($this, false);
 
         parent::setUp();
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testLegacyName()
+    {
+        $form = $this->factory->create('locale');
+
+        $this->assertSame('locale', $form->getConfig()->getType()->getName());
     }
 
     public function testLocalesAreSelectable()

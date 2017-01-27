@@ -18,12 +18,18 @@ use Symfony\Bridge\Doctrine\Form\ChoiceList\DoctrineChoiceLoader;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\EntityLoaderInterface;
 use Symfony\Bridge\Doctrine\Form\ChoiceList\IdReader;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
+use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 
 /**
  * @author Bernhard Schussek <bschussek@gmail.com>
  */
 class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ChoiceListFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $factory;
+
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -92,60 +98,36 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoiceList()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
         );
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
+        $choiceList = new ArrayChoiceList(array());
         $value = function () {};
-        $choiceList = new ArrayChoiceList($choices, $value);
 
         $this->repository->expects($this->once())
             ->method('findAll')
             ->willReturn($choices);
 
-        $this->assertEquals($choiceList, $loader->loadChoiceList($value));
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices, $value)
+            ->willReturn($choiceList);
+
+        $this->assertSame($choiceList, $loader->loadChoiceList($value));
 
         // no further loads on subsequent calls
 
-        $this->assertEquals($choiceList, $loader->loadChoiceList($value));
-    }
-
-    /**
-     * @group legacy
-     */
-    public function testLegacyLoadChoiceList()
-    {
-        $factory = $this->getMock('Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface');
-        $loader = new DoctrineChoiceLoader(
-            $factory,
-            $this->om,
-            $this->class,
-            $this->idReader
-        );
-
-        $choices = array($this->obj1, $this->obj2, $this->obj3);
-        $value = function () {};
-        $choiceList = new ArrayChoiceList($choices, $value);
-
-        $this->repository->expects($this->once())
-            ->method('findAll')
-            ->willReturn($choices);
-
-        $factory->expects($this->never())
-            ->method('createListFromChoices');
-
-        $this->assertEquals($choiceList, $loaded = $loader->loadChoiceList($value));
-
-        // no further loads on subsequent calls
-
-        $this->assertSame($loaded, $loader->loadChoiceList($value));
+        $this->assertSame($choiceList, $loader->loadChoiceList($value));
     }
 
     public function testLoadChoiceListUsesObjectLoaderIfAvailable()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader,
@@ -153,7 +135,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         );
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
-        $choiceList = new ArrayChoiceList($choices);
+        $choiceList = new ArrayChoiceList(array());
 
         $this->repository->expects($this->never())
             ->method('findAll');
@@ -162,26 +144,38 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntities')
             ->willReturn($choices);
 
-        $this->assertEquals($choiceList, $loaded = $loader->loadChoiceList());
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices)
+            ->willReturn($choiceList);
+
+        $this->assertSame($choiceList, $loader->loadChoiceList());
 
         // no further loads on subsequent calls
 
-        $this->assertSame($loaded, $loader->loadChoiceList());
+        $this->assertSame($choiceList, $loader->loadChoiceList());
     }
 
     public function testLoadValuesForChoices()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
         );
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
+        $choiceList = new ArrayChoiceList($choices);
 
         $this->repository->expects($this->once())
             ->method('findAll')
             ->willReturn($choices);
+
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices)
+            ->willReturn($choiceList);
 
         $this->assertSame(array('1', '2'), $loader->loadValuesForChoices(array($this->obj2, $this->obj3)));
 
@@ -193,6 +187,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadValuesForChoicesDoesNotLoadIfEmptyChoices()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -201,12 +196,16 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->never())
             ->method('findAll');
 
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
+
         $this->assertSame(array(), $loader->loadValuesForChoices(array()));
     }
 
     public function testLoadValuesForChoicesDoesNotLoadIfSingleIntId()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -218,6 +217,9 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->expects($this->never())
             ->method('findAll');
+
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
 
         $this->idReader->expects($this->any())
             ->method('getIdValue')
@@ -230,6 +232,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadValuesForChoicesLoadsIfSingleIntIdAndValueGiven()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -237,6 +240,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
         $value = function (\stdClass $object) { return $object->name; };
+        $choiceList = new ArrayChoiceList($choices, $value);
 
         $this->idReader->expects($this->any())
             ->method('isSingleId')
@@ -245,6 +249,11 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->once())
             ->method('findAll')
             ->willReturn($choices);
+
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices, $value)
+            ->willReturn($choiceList);
 
         $this->assertSame(array('B'), $loader->loadValuesForChoices(
             array($this->obj2),
@@ -255,6 +264,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadValuesForChoicesDoesNotLoadIfValueIsIdReader()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -268,6 +278,9 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->expects($this->never())
             ->method('findAll');
+
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
 
         $this->idReader->expects($this->any())
             ->method('getIdValue')
@@ -283,16 +296,23 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoicesForValues()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
         );
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
+        $choiceList = new ArrayChoiceList($choices);
 
         $this->repository->expects($this->once())
             ->method('findAll')
             ->willReturn($choices);
+
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices)
+            ->willReturn($choiceList);
 
         $this->assertSame(array($this->obj2, $this->obj3), $loader->loadChoicesForValues(array('1', '2')));
 
@@ -304,6 +324,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoicesForValuesDoesNotLoadIfEmptyValues()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -312,12 +333,16 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->never())
             ->method('findAll');
 
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
+
         $this->assertSame(array(), $loader->loadChoicesForValues(array()));
     }
 
     public function testLoadChoicesForValuesLoadsOnlyChoicesIfSingleIntId()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader,
@@ -336,6 +361,9 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->expects($this->never())
             ->method('findAll');
+
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
 
         $this->objectLoader->expects($this->once())
             ->method('getEntitiesByIds')
@@ -358,6 +386,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoicesForValuesLoadsAllIfSingleIntIdAndValueGiven()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader
@@ -365,6 +394,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $choices = array($this->obj1, $this->obj2, $this->obj3);
         $value = function (\stdClass $object) { return $object->name; };
+        $choiceList = new ArrayChoiceList($choices, $value);
 
         $this->idReader->expects($this->any())
             ->method('isSingleId')
@@ -373,6 +403,11 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->once())
             ->method('findAll')
             ->willReturn($choices);
+
+        $this->factory->expects($this->once())
+            ->method('createListFromChoices')
+            ->with($choices, $value)
+            ->willReturn($choiceList);
 
         $this->assertSame(array($this->obj2), $loader->loadChoicesForValues(
             array('B'),
@@ -383,6 +418,7 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
     public function testLoadChoicesForValuesLoadsOnlyChoicesIfValueIsIdReader()
     {
         $loader = new DoctrineChoiceLoader(
+            $this->factory,
             $this->om,
             $this->class,
             $this->idReader,
@@ -402,6 +438,9 @@ class DoctrineChoiceLoaderTest extends \PHPUnit_Framework_TestCase
 
         $this->repository->expects($this->never())
             ->method('findAll');
+
+        $this->factory->expects($this->never())
+            ->method('createListFromChoices');
 
         $this->objectLoader->expects($this->once())
             ->method('getEntitiesByIds')

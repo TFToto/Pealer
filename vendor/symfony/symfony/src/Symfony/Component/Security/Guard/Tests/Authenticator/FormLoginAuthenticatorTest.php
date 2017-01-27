@@ -50,9 +50,6 @@ class FormLoginAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::LOGIN_URL, $failureResponse->getTargetUrl());
     }
 
-    /**
-     * @group legacy
-     */
     public function testAuthenticationSuccessWithoutSession()
     {
         $token = $this->getMockBuilder('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface')
@@ -65,9 +62,6 @@ class FormLoginAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::DEFAULT_SUCCESS_URL, $redirectResponse->getTargetUrl());
     }
 
-    /**
-     * @group legacy
-     */
     public function testAuthenticationSuccessWithSessionButEmpty()
     {
         $token = $this->getMockBuilder('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface')
@@ -84,9 +78,6 @@ class FormLoginAuthenticatorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(self::DEFAULT_SUCCESS_URL, $redirectResponse->getTargetUrl());
     }
 
-    /**
-     * @group legacy
-     */
     public function testAuthenticationSuccessWithSessionAndTarget()
     {
         $token = $this->getMockBuilder('Symfony\\Component\\Security\\Core\\Authentication\\Token\\TokenInterface')

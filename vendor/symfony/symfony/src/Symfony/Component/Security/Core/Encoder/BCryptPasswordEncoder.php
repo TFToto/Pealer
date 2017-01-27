@@ -62,7 +62,7 @@ class BCryptPasswordEncoder extends BasePasswordEncoder
      *
      * @throws BadCredentialsException when the given password is too long
      *
-     * @link http://lxr.php.net/xref/PHP_5_5/ext/standard/password.c#111
+     * @see http://lxr.php.net/xref/PHP_5_5/ext/standard/password.c#111
      */
     public function encodePassword($raw, $salt)
     {
@@ -73,7 +73,9 @@ class BCryptPasswordEncoder extends BasePasswordEncoder
         $options = array('cost' => $this->cost);
 
         if ($salt) {
-            // Ignore $salt, the auto-generated one is always the best
+            @trigger_error('Passing a $salt to '.__METHOD__.'() is deprecated since version 2.8 and will be ignored in 3.0.', E_USER_DEPRECATED);
+
+            $options['salt'] = $salt;
         }
 
         return password_hash($raw, PASSWORD_BCRYPT, $options);

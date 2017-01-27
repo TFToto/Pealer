@@ -2,15 +2,14 @@
     "tag1": [
         {
             "class": "Full\\Qualified\\Class2",
+            "scope": "container",
             "public": false,
             "synthetic": true,
             "lazy": false,
             "shared": true,
+            "synchronized": false,
             "abstract": false,
             "file": "\/path\/to\/file",
-            "calls": [
-                "setMailer"
-            ],
             "factory_service": "factory.service",
             "factory_method": "get",
             "autowire": false,
@@ -20,15 +19,14 @@
     "tag2": [
         {
             "class": "Full\\Qualified\\Class2",
+            "scope": "container",
             "public": false,
             "synthetic": true,
             "lazy": false,
             "shared": true,
+            "synchronized": false,
             "abstract": false,
             "file": "\/path\/to\/file",
-            "calls": [
-                "setMailer"
-            ],
             "factory_service": "factory.service",
             "factory_method": "get",
             "autowire": false,

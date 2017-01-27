@@ -76,9 +76,11 @@ class ClassMapGeneratorTest extends \PHPUnit_Framework_TestCase
                 'Namespaced\\Foo' => realpath(__DIR__).'/Fixtures/Namespaced/Foo.php',
                 'Namespaced\\Baz' => realpath(__DIR__).'/Fixtures/Namespaced/Baz.php',
                 'Namespaced\\WithComments' => realpath(__DIR__).'/Fixtures/Namespaced/WithComments.php',
-                'Namespaced\WithStrictTypes' => realpath(__DIR__).'/Fixtures/Namespaced/WithStrictTypes.php',
-                ),
-            ),
+                'Namespaced\\WithStrictTypes' => realpath(__DIR__).'/Fixtures/Namespaced/WithStrictTypes.php',
+                'Namespaced\\WithHaltCompiler' => realpath(__DIR__).'/Fixtures/Namespaced/WithHaltCompiler.php',
+                'Namespaced\\WithDirMagic' => realpath(__DIR__).'/Fixtures/Namespaced/WithDirMagic.php',
+                'Namespaced\\WithFileMagic' => realpath(__DIR__).'/Fixtures/Namespaced/WithFileMagic.php',
+            )),
             array(__DIR__.'/Fixtures/beta/NamespaceCollision', array(
                 'NamespaceCollision\\A\\B\\Bar' => realpath(__DIR__).'/Fixtures/beta/NamespaceCollision/A/B/Bar.php',
                 'NamespaceCollision\\A\\B\\Foo' => realpath(__DIR__).'/Fixtures/beta/NamespaceCollision/A/B/Foo.php',
@@ -103,18 +105,24 @@ class ClassMapGeneratorTest extends \PHPUnit_Framework_TestCase
                 'ClassMap\\SomeParent' => realpath(__DIR__).'/Fixtures/classmap/SomeParent.php',
                 'ClassMap\\SomeClass' => realpath(__DIR__).'/Fixtures/classmap/SomeClass.php',
             )),
-            array(__DIR__.'/Fixtures/php5.4', array(
+        );
+
+        if (PHP_VERSION_ID >= 50400) {
+            $data[] = array(__DIR__.'/Fixtures/php5.4', array(
                 'TFoo' => __DIR__.'/Fixtures/php5.4/traits.php',
                 'CFoo' => __DIR__.'/Fixtures/php5.4/traits.php',
                 'Foo\\TBar' => __DIR__.'/Fixtures/php5.4/traits.php',
                 'Foo\\IBar' => __DIR__.'/Fixtures/php5.4/traits.php',
                 'Foo\\TFooBar' => __DIR__.'/Fixtures/php5.4/traits.php',
                 'Foo\\CBar' => __DIR__.'/Fixtures/php5.4/traits.php',
-            )),
-            array(__DIR__.'/Fixtures/php5.5', array(
+            ));
+        }
+
+        if (PHP_VERSION_ID >= 50500) {
+            $data[] = array(__DIR__.'/Fixtures/php5.5', array(
                 'ClassCons\\Foo' => __DIR__.'/Fixtures/php5.5/class_cons.php',
-            )),
-        );
+            ));
+        }
 
         return $data;
     }

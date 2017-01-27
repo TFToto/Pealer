@@ -20,9 +20,19 @@ class MoneyTypeTest extends TestCase
     {
         // we test against different locales, so we need the full
         // implementation
-        IntlTestHelper::requireFullIntl($this);
+        IntlTestHelper::requireFullIntl($this, false);
 
         parent::setUp();
+    }
+
+    /**
+     * @group legacy
+     */
+    public function testLegacyName()
+    {
+        $form = $this->factory->create('money');
+
+        $this->assertSame('money', $form->getConfig()->getType()->getName());
     }
 
     public function testPassMoneyPatternToView()
