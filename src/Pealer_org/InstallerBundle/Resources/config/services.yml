@@ -1,0 +1,4 @@
+services:
+#    pealer_installer.example:
+#        class: Pealer\InstallerBundle\Example
+#        arguments: ["@service_id", "plain_value", "%parameter%"]

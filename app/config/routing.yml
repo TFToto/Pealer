@@ -1,0 +1,28 @@
+pealer_dashboard:
+    resource: "@PealerDashboardBundle/Controller/"
+    type:     annotation
+    prefix:   /{_locale}
+
+pealer_backuper:
+    resource: "@PealerBackuperBundle/Controller/"
+    type:     annotation
+    prefix:   /{_locale}
+
+pealer_updater:
+    resource: "@PealerUpdaterBundle/Controller/"
+    type:     annotation
+    prefix:   /{_locale}
+
+pealer_installer:
+    resource: "@PealerInstallerBundle/Controller/"
+    type:     annotation
+    prefix:   /{_locale}
+
+pealer_hello:
+    resource: "@PealerHelloBundle/Controller/"
+    type:     annotation
+    prefix:   /{_locale}
+
+#app:
+#    resource: "@AppBundle/Controller/"
+#    type:     annotation

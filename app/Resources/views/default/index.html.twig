@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}	
+	<div class="row align-middle">
+		<div class="columns hide-for-small-only"><p class="text-center welcome-title ">{{ 'title.hello'|trans|raw }}</p></div>
+		<div class="columns"><img src="{{ asset('image/start_logo.png') }}" alt="Pealer logo" class="float-center"></div>
+	</div>	
+	<div class="row">
+		<div class="small-6 large-centered columns">
+			<div class="callout secondary login-form">
+				<h4>{{ 'general.account'|trans }}</h4>
+				<div class="input-group">
+					<span class="input-group-label login">{{ 'general.username'|trans }}</span>
+					<input class="input-group-field" type="text" id="middle-label">
+				</div>
+				<div class="input-group">
+					<span class="input-group-label login">{{ 'general.password'|trans }}</span>
+					<input class="input-group-field" type="password">
+				</div>
+				<a class="button" href="#">{{ 'general.login'|trans }}</a>
+			</div>
+		</div>
+	</div>
+{% endblock %}

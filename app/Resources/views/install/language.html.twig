@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<div class="off-canvas-wrapper">
+	<div class="off-canvas-wrapper-inner" data-off-canvas-wrapper>
+        {{ include('install/navigation.html.twig') }}
+		<div class="off-canvas-content" data-off-canvas-content>
+			
+			<div class="callout primary">
+				<div class="medium-4 columns">
+					<img src="{{ asset('image/start_logo.min.png') }}" alt="Pealer logo">
+				</div>
+				<div class="medium-8 columns text-left"></div>
+				<div class="row column"></div>
+			</div>
+			<div class="row">
+				<div class="medium-6 columns">
+					<h3>{{ 'install.title.language'|trans }}</h3>
+					<p>{{ 'install.description.language'|trans }}</p>	
+				</div>
+				<div class="medium-6 columns">
+					<h3>{{ 'menu.choose_language'|trans }}</h3>
+					<ul class="dropdown-menu locales" role="menu" aria-labelledby="locales">
+                        {% for locale in locales() %}
+                        	<li {% if app.request.locale == locale.code %}aria-checked="true" class="active"{%else%}aria-checked="false"{% endif %} role="menuitem"><a href="{{ path(app.request.get('_route', 'systemcheck'), app.request.get('_route_params', [])|merge({ _locale: locale.code })) }}">{{ locale.name|capitalize }}</a></li>
+                        {% endfor %}
+                    </ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

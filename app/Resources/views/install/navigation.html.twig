@@ -1,0 +1,22 @@
+<div class="off-canvas position-left reveal-for-large" id="my-info" data-off-canvas data-position="left">
+	<div class="row column">
+		<br>
+		<h1>Install</h1>
+		<h5>Steps</h5>
+		<ul class="menu vertical">
+			<li class="nav-item"><a href="{{ path('installer_language') }}"><i class="fa fa-language" aria-hidden="true"></i>{{ 'nav.install.language'|trans }}</a></li>
+			<li class="nav-item"><a href="{{ path('installer_licence') }}"><i class="fa fa-file-code-o" aria-hidden="true"></i>{{ 'nav.install.licence'|trans }}</a></li>
+			<li class="nav-item"><a href="{{ path('installer_systemcheck') }}"><i class="fa fa-cogs" aria-hidden="true"></i>{{ 'nav.install.systemcheck'|trans }}</a></li>
+			<li class="nav-item"><a href="{{ path('installer_database') }}"><i class="fa fa-database" aria-hidden="true"></i>{{ 'nav.install.database'|trans }}</a></li>
+			<li class="nav-item"><a href="{{ path('installer_installextensions') }}"><i class="fa fa-cubes" aria-hidden="true"></i>{{ 'nav.install.installextensions'|trans }}</a>
+			<li class="nav-item"><a href="{{ path('installer_finish') }}"><i class="fa fa-flag-checkered" aria-hidden="true"></i>{{ 'nav.install.finish'|trans }}</a>
+		</ul>
+	</div>
+	
+	<div class="title-bar hide-for-large">
+		<div class="title-bar-left">
+			<button class="menu-icon" type="button" data-open="my-info"></button>
+			<span class="title-bar-title">Install Steps</span>
+		</div>
+	</div>
+</div>

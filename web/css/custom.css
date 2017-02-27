@@ -1,0 +1,108 @@
+@CHARSET "UTF-8";
+
+/*
+Colors
+main: blue #86a9cc
+*/
+
+/* Main Head */
+.callout.primary {
+    background-color: #dadada;
+}
+
+a {
+	color: #646464;
+}
+a:hover {
+	color: #86a9cc;
+	718eab
+}
+
+.maintitle > h3:nth-child(1) {
+	margin-top: 56px;
+	color: #646464;
+	position: absolute;
+}
+.welcome-title {
+	color: #646464;
+	font-size: 26px;
+	margin: 100px 185px -30px 0px;
+	
+	 animation: fadein 3s;
+    -moz-animation: fadein 3s;
+    -webkit-animation: fadein 3s;
+    -o-animation: fadein 3s;
+}
+
+@keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-moz-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-webkit-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity:1;
+    }
+}
+@-o-keyframes fadein {
+    from {
+        opacity:0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.subtitle {
+	margin-top: 90px;
+	color: #646464;
+	position: absolute;
+	font-size: 20px;
+}
+
+.fa {
+	width: 20px;
+	display: inline-block;
+	position: relative;
+	top:-2px;
+}
+.nav-item {
+	font-weight: bold;
+}
+
+span.input-group-label.login {
+	width: 130px;
+}
+div.callout.secondary.login-form {
+	margin: 50px 0;
+}
+
+div.footer {
+	background-color: #fff;
+	bottom: 0;
+	box-shadow: 0 -1px 0px rgba(0, 0, 0, 0.2);
+	color: #646464;
+	font: 11px Arial, sans-serif;
+	left: 0;
+	margin: 0;
+	padding: 8px 36px 0 12px;
+	position: fixed;
+	right: 0;
+	text-align: left;
+	text-transform: none;
+	z-index: 99999;
+}
