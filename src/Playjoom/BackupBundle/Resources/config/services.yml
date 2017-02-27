@@ -1,4 +1,0 @@
-services:
-#    playjoom_backup.example:
-#        class: Playjoom\BackupBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
