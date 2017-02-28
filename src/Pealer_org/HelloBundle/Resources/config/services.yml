@@ -1,4 +1,0 @@
-services:
-#    pealer_hello.example:
-#        class: Pealer\HelloBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]

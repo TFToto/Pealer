@@ -1,4 +1,0 @@
-services:
-#    pealer_updater.example:
-#        class: Pealer\UpdaterBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]

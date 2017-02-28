@@ -17,11 +17,11 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
-            new Pealer\BackuperBundle\PealerBackuperBundle(),
-            new Pealer\DashboardBundle\PealerDashboardBundle(),
             new Pealer\HelloBundle\PealerHelloBundle(),
             new Pealer\InstallerBundle\PealerInstallerBundle(),
             new Pealer\UpdaterBundle\PealerUpdaterBundle(),
+            new Pealer\BackuperBundle\PealerBackuperBundle(),
+            new Pealer\DashboardBundle\PealerDashboardBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {

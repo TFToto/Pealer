@@ -1,4 +1,0 @@
-services:
-#    pealer_dashboard.example:
-#        class: Pealer\DashboardBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
